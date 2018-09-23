@@ -13,6 +13,7 @@
 
 #include <cstdlib>
 #include <bcm2835.h>        // hardware definition library file
+#include <stdio.h>
 
 
 using namespace std;
@@ -21,13 +22,25 @@ using namespace std;
  * 
  */
 int main(int argc, char** argv) {
+    
+    if (!bcm2835_init())
+    {
+      printf("bcm2835_init failed. Are you running as root??\n");
+      return 1;
+    }
+    if (!bcm2835_spi_begin())
+    {
+      printf("bcm2835_spi_begin failed. Are you running as root??\n");
+cd ..
+        return 1;
+    }
 
     //Setup SPI pins
-	bcm2835_spi_begin();
+	//bcm2835_spi_begin();
 	
 	//Set CS pins polarity to low
-	bcm2835_spi_setChipSelectPolarity(BCM2835_SPI_CS0, 0);
-	bcm2835_spi_setChipSelectPolarity(BCM2835_SPI_CS1, 0);
+	// bcm2835_spi_setChipSelectPolarity(BCM2835_SPI_CS0, 0);
+	// bcm2835_spi_setChipSelectPolarity(BCM2835_SPI_CS1, 0);
 	
 	//Set SPI clock speed
 	//	BCM2835_SPI_CLOCK_DIVIDER_65536 = 0,       ///< 65536 = 262.144us = 3.814697260kHz (total H+L clock period) 
@@ -47,7 +60,7 @@ int main(int argc, char** argv) {
 	//	BCM2835_SPI_CLOCK_DIVIDER_4     = 4,       ///< 4 = 16ns = 62.5MHz
 	//	BCM2835_SPI_CLOCK_DIVIDER_2     = 2,       ///< 2 = 8ns = 125MHz, fastest you can get
 	//	BCM2835_SPI_CLOCK_DIVIDER_1     = 1,       ///< 1 = 262.144us = 3.814697260kHz, same as 0/65536
-	bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_128);
+	bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_4096);
 
 	//Set SPI data mode
 	//	BCM2835_SPI_MODE0 = 0,  // CPOL = 0, CPHA = 0, Clock idle low, data is clocked in on rising edge, output data (change) on falling edge
